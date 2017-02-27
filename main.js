@@ -36,9 +36,14 @@ var yAxis = d3.svg.axis()
               .orient("left");
 
 
-var line = d3.svg.line()
+// var line = d3.svg.line()
+//     .x(function(d) { return xScale(d.date); })
+//     .y(function(d) { return yScale(d.close); });
+
+
+var area = d3.svg.area()
     .x(function(d) { return xScale(d.date); })
-    .y(function(d) { return yScale(d.close); });
+    .y1(function(d) { return yScale(d.close); });
 
 
 d3.tsv("data.tsv", function(error,callbackData) {
@@ -56,38 +61,44 @@ d3.tsv("data.tsv", function(error,callbackData) {
    xScale.domain(d3.extent(callbackData, function(d) { return d.date; }));
    yScale.domain(d3.extent(callbackData, function(d) { return d.close; })); 
 
+   area.y0(height);
+
+   g.append("path")
+        .datum(callbackData)
+        .attr("fill", "steelblue")
+        .attr("d", area);
+
 
    g.append("g")
             .attr("class", "axis")
             .attr("transform", "translate(0," + height  + ")")
             .call(xAxis)
-        .append("text")
-        .attr("x", width-config.svgMargin.right)
-        .attr("y", -5)
-        .style("text-anchor", "end")
-        .text("Date");
+    .append("text")
+            .attr("x", width-config.svgMargin.right)
+            .attr("y", -5)
+            .style("text-anchor", "end")
+            .text("Date");
 
 
 
     g.append("g")
             .attr("class", "axis")
             .call(yAxis)
-        .append("text")
+     .append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 10)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text("Price ($)");
 
-
-    g.append("path")
-      .datum(callbackData)
-      .attr("fill", "none")
-      .attr("stroke", "teal")
-      .attr("stroke-linejoin", "square")
-      .attr("stroke-linecap", "square")
-      .attr("stroke-width", 1.5)
-      .attr("d", line);
+    // g.append("path")
+    //   .datum(callbackData)
+    //   .attr("fill", "none")
+    //   .attr("stroke", "teal")
+    //   .attr("stroke-linejoin", "square")
+    //   .attr("stroke-linecap", "square")
+    //   .attr("stroke-width", 1.5)
+    //   .attr("d", line);
 });
 
 
